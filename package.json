@@ -1,0 +1,36 @@
+{
+  "name": "WeatherApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/eslint --ext .js ./",
+    "lintfix": "./node_modules/.bin/eslint --fix --ext .js  ./",
+    "start-dev": "nodemon ./server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "ejs": "^2.6.1",
+    "express": "^4.17.1",
+    "express-session": "^1.16.1",
+    "mongoose": "^5.5.11",
+    "morgan": "^1.9.1",
+    "pg": "^7.11.0",
+    "request": "^2.88.0",
+    "sequelize": "^5.8.7",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "nodemon": "^1.19.1"
+  }
+}
