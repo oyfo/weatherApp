@@ -1,12 +1,8 @@
-/* eslint-disable no-underscore-dangle */
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
-const weather = require('./src/helpers/weather');
-const userService = require('./src/user/user.service');
 
 const app = express(); // create epxress
 
@@ -25,7 +21,7 @@ app.use(session({ // init express-session to track cross-session user
         expires: 600000,
     },
 }));
-
+app.use('/', require('./src/user/user.router'));
 
 // This middleware will check if user's cookie is still saved in browser and user is not set,
 // then automatically log the user out.
@@ -38,44 +34,44 @@ app.use((req, res, next) => {
     next();
 });
 
-const sessionChecker = (req, res, next) => { // check is user is logged in
-    if (req.session.user && req.cookies.user_sid) {
-        res.redirect('/userpanel');
-    } else {
-        next();
-    }
-};
+// const sessionChecker = (req, res, next) => { // check is user is logged in
+//     if (req.session.user && req.cookies.user_sid) {
+//         res.redirect('/userpanel');
+//     } else {
+//         next();
+//     }
+// };
 
-app.get('/', sessionChecker, (req, res) => { // homepage
-    res.redirect('/login');
-});
+// app.get('/', sessionChecker, (req, res) => { // homepage
+//     res.redirect('/login');
+// });
 
-app.route('/signup') // signup route
-    .get((req, res) => {
-        res.clearCookie('user_sid');
-        res.render('signup');
-    })
-    .post((req, res) => {
-        userService.create(req.body)
-            .then((user) => {
-                req.session.user = user;
-                res.redirect('/userpanel');
-            })
-            .catch((error) => {
-                console.log(error);
-                res.redirect('/signup');
-            });
-    });
+// app.route('/signup') // signup route
+//     .get((req, res) => {
+//         res.clearCookie('user_sid');
+//         res.render('signup');
+//     })
+//     .post((req, res) => {
+//         userService.create(req.body)
+//             .then((user) => {
+//                 req.session.user = user;
+//                 res.redirect('/userpanel');
+//             })
+//             .catch((error) => {
+//                 console.log(error);
+//                 res.redirect('/signup');
+//             });
+//     });
 
-app.route('/login') // log in route
+/* app.route('/login') // log in route
     .get(sessionChecker, (req, res) => {
         // console.log(req.query);
         res.render('login', { message: req.query.message });
-    })
-    .post((req, res) => {
-        const { username } = req.body;
-        const { password } = req.body;
-        userService.authenticate({ username, password }).then((user) => {
+    }); */
+   /* .post((req, res) => {
+      //  const { username } = req.body;
+       // const { password } = req.body;
+        userService.authenticate(req{ username, password }).then((user) => {
             if (!user) {
                 res.redirect('/login?message=Wrong login or password');
             } else {
@@ -83,17 +79,17 @@ app.route('/login') // log in route
                 res.redirect('/userpanel');
             }
         });
-    });
+    }); */
 
-app.route('/userpanel') // user panel route and logic
+/* app.route('/userpanel') // user panel route and logic
     .get((req, res) => {
         if (req.session.user && req.cookies.user_sid) {
-            console.log(req.session.user);
+            // console.log(req.session.user);
             userService.getCities(req.session.user._id).then((cityList) => {
-                console.log('cityList');
-                console.log(cityList);
+                // console.log('cityList');
+                // console.log(cityList);
                 (weather.getWeatherForCities(cityList))
-                    .then((response/* , body */) => {
+                    .then((response) => {
                         const forecast = weather.parseWeatherResponse(response);
                         res.render('userpanel', {
                             cities: cityList,
@@ -106,11 +102,11 @@ app.route('/userpanel') // user panel route and logic
         } else {
             res.redirect('/login');
         }
-    })
-    .post((req, res) => { // add and delete city logic
+    }); */
+   /* .post((req, res) => { // add and delete city logic
         if (req.session.user && req.cookies.user_sid) {
-            console.log('REQQQ BODY');
-            console.log(req.body);
+            //  console.log('REQQQ BODY');
+            // console.log(req.body);
             if (req.body.cityToAdd) {
                 weather.getWeatherForCity(req.body.cityToAdd).then((cityResp) => {
                     //  console.log(JSON.parse(cityResp.body));
@@ -133,26 +129,26 @@ app.route('/userpanel') // user panel route and logic
         } else {
             res.redirect('/login');
         }
-    });
+    }); */
 
-app.get('/logout', (req, res) => { // route for logout
-    if (req.session.user && req.cookies.user_sid) {
-        res.clearCookie('user_sid');
-        res.redirect('/');
-    } else {
-        res.redirect('/login');
-    }
-});
+// app.get('/logout', (req, res) => { // route for logout
+//     if (req.session.user && req.cookies.user_sid) {
+//         res.clearCookie('user_sid');
+//         res.redirect('/');
+//     } else {
+//         res.redirect('/login');
+//     }
+// });
 
-app.get('/delete', (req, res) => {
-    if (req.session.user && req.cookies.user_sid) {
-        userService.delete(req.session.user._id);
-        res.clearCookie('user_sid');
-        res.redirect('/signup');
-    } else {
-        res.redirect('/signup');
-    }
-});
+// app.get('/delete', (req, res) => {
+//     if (req.session.user && req.cookies.user_sid) {
+//         userService.delete(req.session.user._id);
+//         res.clearCookie('user_sid');
+//         res.redirect('/signup');
+//     } else {
+//         res.redirect('/signup');
+//     }
+// });
 
 app.use((req, res) => { // 404 handling
     res.status(404).send('Sorry, no such page!');

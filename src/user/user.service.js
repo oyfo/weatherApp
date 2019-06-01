@@ -8,10 +8,12 @@ module.exports = {
     addCity,
     deleteCity,
     getCities,
-    delete: _delete
+    deleteUser
 };
 
-async function authenticate({ username, password }) {
+async function authenticate(req) {
+    const { username } = req.body;
+    const { password } = req.body;
     const user = await User.findOne({ username });
     if (user && bcrypt.compareSync(password, user.password)) {
         const { password, ...userWithoutPass } = user.toObject();
@@ -39,7 +41,7 @@ async function create(userParam) {
     return user;
 }
 
-async function _delete(id) {
+async function deleteUser(id) {
     await User.deleteOne({'_id': id});
 }
 

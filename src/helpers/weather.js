@@ -9,20 +9,30 @@ const options = {
         q: 'London', APPID: config.APIID, cnt: 16, units: 'metric',
     },
     headers:
-   {
-       // 'cache-control': 'no-cache',
-       // Connection: 'keep-alive',
-       // 'accept-encoding': 'gzip, deflate',
-       // Host: 'api.openweathermap.org',
-       'Cache-Control': 'max-age=900', // 'no-cache',
-       Accept: '*/*',
-   },
+    {
+     //   'Cache-Control': 'max-age=900', // 'no-cache',
+      //  Accept: '*/*',
+    },
 };
+
+// const options = {
+//     method: 'GET',
+//     //  url: 'http://api.openweathermap.org/data/2.5/weather',
+//     url: 'http://api.openweathermap.org/data/2.5/forecast',
+//     headers: {
+//         host: 'api.openweathermap.org',
+//     },
+// };
 
 function getWeatherForCity(city) {
     return new Promise((resolve, reject) => {
         options.qs.q = city;
+        // console.log(options);
         request(options, (err, res) => {
+            //  console.log('res');
+            // console.log(res);
+            // console.log('err');
+            // console.log(err);
             if (err) {
                 return reject(err);
             }
