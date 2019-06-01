@@ -1,5 +1,5 @@
 const request = require('request');
-const config = require('./../apiid.json'); // file not commited - contains APIID
+const config = require('./../config/apiid.json'); // file not commited - contains APIID
 
 const options = {
     method: 'GET',

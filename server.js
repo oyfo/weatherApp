@@ -5,8 +5,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
-const weather = require('./helpers/weather');
-const userService = require('./user/user.service');
+const weather = require('./src/helpers/weather');
+const userService = require('./src/user/user.service');
 
 const app = express(); // create epxress
 
