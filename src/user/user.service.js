@@ -27,15 +27,13 @@ async function authenticate(req) {
 }
 
 async function create(userParam) {
-   // if (userParam.cities) {userParam.cities = [userParam.cities]};
     if (await User.findOne({ username: userParam.username })) {
         throw 'Username "' + userParam.username + '" is already taken';
     }
 
     const user = new User(userParam);
-    // hash password
     if (userParam.password) {
-        user.password = bcrypt.hashSync(userParam.password, 10);
+        user.password = bcrypt.hashSync(userParam.password, 10); //hash passowrd
     }
     await user.save();
     return user;
