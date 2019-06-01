@@ -1,13 +1,9 @@
-const config = require('./../config.json');
-//const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');//bcrypt???
+const bcrypt = require('bcryptjs');
 const db = require('./../helpers/db');
 const User = db.User;
 
 module.exports = {
     authenticate,
-    //getAll,
-   // getById,
     create,
     addCity,
     deleteCity,
@@ -24,12 +20,12 @@ async function authenticate({ username, password }) {
         };
     } else {
         console.log('else not correct pass');
-        return null
+        return null;
     }
 }
 
 async function create(userParam) {
-    userParam.cities = [userParam.cities];
+   // if (userParam.cities) {userParam.cities = [userParam.cities]};
     if (await User.findOne({ username: userParam.username })) {
         throw 'Username "' + userParam.username + '" is already taken';
     }

@@ -1,24 +1,22 @@
+/* eslint-disable no-underscore-dangle */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
 const weather = require('./helpers/weather');
-// var User = require('./models/user');
 const userService = require('./user/user.service');
 
-// invoke an instance of express application.
-const app = express();
+const app = express(); // create epxress
 
 const PORT = 9000;
-
-
-app.set('port', PORT); //set app port
-app.set('view engine', 'ejs'); //set view engine to ejs
+app.set('port', PORT); // set app port
+app.set('view engine', 'ejs'); // set view engine to ejs
 app.use(morgan('dev')); // user morgan for info about requests while dev
 app.use(bodyParser.urlencoded({ extended: true })); // parse incoming requests to req.body
 app.use(cookieParser()); // use cookie parser
-app.use(session({ //init express-session to track cross-session user
+app.use(session({ // init express-session to track cross-session user
     key: 'user_sid',
     secret: 'somerandonstuffs',
     resave: false,
@@ -29,8 +27,10 @@ app.use(session({ //init express-session to track cross-session user
 }));
 
 
-// This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
-// This usually happens when you stop your express server after login, your cookie still remains saved in the browser.
+// This middleware will check if user's cookie is still saved in browser and user is not set,
+// then automatically log the user out.
+// This usually happens when you stop your express server after login,
+// your cookie still remains saved in the browser.
 app.use((req, res, next) => {
     if (req.cookies.user_sid && !req.session.user) {
         res.clearCookie('user_sid');
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const sessionChecker = (req, res, next) => { //check is user is logged in
+const sessionChecker = (req, res, next) => { // check is user is logged in
     if (req.session.user && req.cookies.user_sid) {
         res.redirect('/userpanel');
     } else {
@@ -51,7 +51,8 @@ app.get('/', sessionChecker, (req, res) => { // homepage
 });
 
 app.route('/signup') // signup route
-    .get(sessionChecker, (req, res) => {
+    .get((req, res) => {
+        res.clearCookie('user_sid');
         res.render('signup');
     })
     .post((req, res) => {
@@ -66,54 +67,69 @@ app.route('/signup') // signup route
             });
     });
 
-app.route('/login') //log in route
+app.route('/login') // log in route
     .get(sessionChecker, (req, res) => {
-        res.render('login');
+        // console.log(req.query);
+        res.render('login', { message: req.query.message });
     })
-    .post((req, res, error) => {
+    .post((req, res) => {
         const { username } = req.body;
         const { password } = req.body;
         userService.authenticate({ username, password }).then((user) => {
             if (!user) {
-                res.redirect('/login');
+                res.redirect('/login?message=Wrong login or password');
             } else {
                 req.session.user = user.userWithoutPass;
                 res.redirect('/userpanel');
-                userId = req.session.user.id;
             }
-
         });
     });
 
 app.route('/userpanel') // user panel route and logic
     .get((req, res) => {
         if (req.session.user && req.cookies.user_sid) {
-            userService.getCities(req.session.user._id)
-                .then((cityList) => {
-                    console.log(cityList);
-                    (weather.getWeatherForCities(cityList))
-                        .then((response, body) => {
-                            // console.log(body);
-                            console.log('response.body');
-                            console.log(response.length);
-                            console.log(response[0].body);
-                            res.render('userpanel', { cities: cityList });
-                            userId = req.session.user.id;
+            console.log(req.session.user);
+            userService.getCities(req.session.user._id).then((cityList) => {
+                console.log('cityList');
+                console.log(cityList);
+                (weather.getWeatherForCities(cityList))
+                    .then((response/* , body */) => {
+                        const forecast = weather.parseWeatherResponse(response);
+                        res.render('userpanel', {
+                            cities: cityList,
+                            fore: forecast,
+                            user: req.session.user.username,
+                            message: req.query.message,
                         });
-                });
+                    });
+            });
         } else {
             res.redirect('/login');
         }
     })
     .post((req, res) => { // add and delete city logic
         if (req.session.user && req.cookies.user_sid) {
+            console.log('REQQQ BODY');
+            console.log(req.body);
             if (req.body.cityToAdd) {
-                userService.addCity(req.session.user._id, req.body.cityToAdd);
+                weather.getWeatherForCity(req.body.cityToAdd).then((cityResp) => {
+                    //  console.log(JSON.parse(cityResp.body));
+                    if ((JSON.parse(cityResp.body)).cod === '200') {
+                        console.log('if');
+                        userService.addCity(req.session.user._id, req.body.cityToAdd).then(() => {
+                            res.redirect('/userpanel');
+                        });
+                    } else {
+                        res.redirect('/userpanel?message=City not found');
+                    }
+                });
             }
             if (req.body.cityToDelete) {
-                userService.deleteCity(req.session.user._id, req.body.cityToDelete);
+                userService.deleteCity(req.session.user._id, req.body.cityToDelete).then(() => {
+                    res.redirect('/userpanel');
+                });
             }
-            res.redirect('/userpanel');
+            // res.redirect('/userpanel');
         } else {
             res.redirect('/login');
         }
@@ -138,8 +154,8 @@ app.get('/delete', (req, res) => {
     }
 });
 
-app.use((req, res, next) => {  // 404 handling
-    res.status(404).send("Sorry can't find that!");
+app.use((req, res) => { // 404 handling
+    res.status(404).send('Sorry, no such page!');
 });
 
 // START THE APP!
