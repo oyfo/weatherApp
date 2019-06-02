@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse incoming requests t
 app.use(cookieParser()); // use cookie parser
 app.use(session({ // init express-session to track cross-session user
     key: 'user_sid',
-    secret: 'somerandonstuffs',
+    secret: 'somerandonstuffs', // should be kept somewhere else
     resave: false,
     saveUninitialized: false,
     cookie: {

@@ -24,21 +24,17 @@ function signup(req, res) {
 }
 
 function createUser(req, res) {
-    console.log('req');
-    console.log(req.body);
     userService.create(req.body)
         .then((user) => {
             req.session.user = user;
             res.redirect('/userpanel');
         })
-        .catch((err) => {
-            console.log('CATCH');
-            console.log(err);
+        .catch(() => {
             res.redirect('/signup');
         });
 }
 
-function auth(req, res, next) { 
+function auth(req, res, next) {
     userService.authenticate(req).then((user) => {
         if (!user) {
             res.redirect('/login?message=Wrong login or password');

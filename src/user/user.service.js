@@ -2,15 +2,6 @@ const bcrypt = require('bcryptjs');
 const db = require('./../helpers/db');
 const User = db.User;
 
-module.exports = {
-    authenticate,
-    create,
-    addCity,
-    deleteCity,
-    getCities,
-    deleteUser
-};
-
 async function authenticate(req) {
     const { username } = req.body;
     const { password } = req.body;
@@ -26,19 +17,13 @@ async function authenticate(req) {
 }
 
 async function create(userParam) {
-    console.log('userParam')
-    console.log(userParam)
-    const xxx = await User.findOne({ username: userParam.username })
-    console.log(xxx);
-    if (xxx) {
+    if (await User.findOne({ username: userParam.username })) {
         throw 'Username "' + userParam.username + '" is already taken';
     }
-
     const user = new User(userParam);
     if (userParam.password) {
         user.password = bcrypt.hashSync(userParam.password, 10); //hash passowrd
     }
-    console.log('XXXXXXXXXXXXXXXXXX')
     await user.save();
     return user;
 }
@@ -66,3 +51,12 @@ async function deleteCity(id, city) {
     user.cities = user.cities.filter((element) => {return element != city});
     await user.save();
 }
+
+module.exports = {
+    authenticate,
+    create,
+    addCity,
+    deleteCity,
+    getCities,
+    deleteUser
+};
