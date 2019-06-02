@@ -26,7 +26,11 @@ async function authenticate(req) {
 }
 
 async function create(userParam) {
-    if (await User.findOne({ username: userParam.username })) {
+    console.log('userParam')
+    console.log(userParam)
+    const xxx = await User.findOne({ username: userParam.username })
+    console.log(xxx);
+    if (xxx) {
         throw 'Username "' + userParam.username + '" is already taken';
     }
 
@@ -34,6 +38,7 @@ async function create(userParam) {
     if (userParam.password) {
         user.password = bcrypt.hashSync(userParam.password, 10); //hash passowrd
     }
+    console.log('XXXXXXXXXXXXXXXXXX')
     await user.save();
     return user;
 }

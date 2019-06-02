@@ -11,9 +11,12 @@ const {
     expect,
 } = chai;
 chai.use(chaiAsPromised);
-nock.disableNetConnect();
+
 
 describe('weather.js helper tests', () => {
+    before(() => {
+        nock.disableNetConnect();
+    });
     describe('getWeatherForCitiy', () => {
         it('should resolve promise', () => {
             nock('http://api.openweathermap.org/data/2.5/forecast/', {
@@ -114,5 +117,9 @@ describe('weather.js helper tests', () => {
             const forecast = weather.parseWeatherResponse([res]);
             expect(forecast).to.be.empty;
         });
+    });
+
+    after(() => {
+        nock.enableNetConnect();
     });
 });

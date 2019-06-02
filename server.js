@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
+const routes = require('./src/user/user.router');
 
 const app = express(); // create epxress
 
@@ -29,7 +30,7 @@ app.use((req, res, next) => { // clear cookies
     next();
 });
 
-app.use('/', require('./src/user/user.router')); // attach API router
+app.use('/', routes); // attach API router
 
 app.use((req, res) => { // 404 handling
     res.status(404).send('Sorry, no such page!');
@@ -37,3 +38,5 @@ app.use((req, res) => { // 404 handling
 
 // START THE APP!
 app.listen(app.get('port'), () => console.log(`App started on port ${app.get('port')}`));
+
+module.exports = app; // for testing
