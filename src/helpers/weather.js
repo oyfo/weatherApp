@@ -3,33 +3,22 @@ const config = require('./../config/apiid.json'); // file not commited - contain
 
 const options = {
     method: 'GET',
-    //  url: 'http://api.openweathermap.org/data/2.5/weather',
-    url: 'http://api.openweathermap.org/data/2.5/forecast',
+    url: 'http://api.openweathermap.org/data/2.5/forecast/',
     qs: {
         q: 'London', APPID: config.APIID, cnt: 16, units: 'metric',
     },
     headers:
     {
-     //   'Cache-Control': 'max-age=900', // 'no-cache',
-      //  Accept: '*/*',
+        'Cache-Control': 'max-age=900',
     },
 };
-
-// const options = {
-//     method: 'GET',
-//     //  url: 'http://api.openweathermap.org/data/2.5/weather',
-//     url: 'http://api.openweathermap.org/data/2.5/forecast',
-//     headers: {
-//         host: 'api.openweathermap.org',
-//     },
-// };
 
 function getWeatherForCity(city) {
     return new Promise((resolve, reject) => {
         options.qs.q = city;
         // console.log(options);
         request(options, (err, res) => {
-            //  console.log('res');
+            // console.log('res');
             // console.log(res);
             // console.log('err');
             // console.log(err);
