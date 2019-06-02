@@ -16,12 +16,7 @@ const options = {
 function getWeatherForCity(city) {
     return new Promise((resolve, reject) => {
         options.qs.q = city;
-        // console.log(options);
         request(options, (err, res) => {
-            // console.log('res');
-            // console.log(res);
-            // console.log('err');
-            // console.log(err);
             if (err) {
                 return reject(err);
             }
@@ -43,9 +38,7 @@ function getWeatherForCities(cities) {
 function parseWeatherResponse(response) {
     const forecast = {};
     response.forEach((element) => {
-        if (JSON.parse(element.body).cod !== '200') {
-            //  console.log('wrong city');
-        } else {
+        if (JSON.parse(element.body).cod === '200') {
             const li = (JSON.parse(element.body).list);
             forecast[JSON.parse(element.body).city.name] = [];
             Object.keys(li).forEach((key) => {

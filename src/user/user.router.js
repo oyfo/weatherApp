@@ -72,7 +72,6 @@ function handleCities(req, res) {
         if (req.body.cityToAdd) {
             weather.getWeatherForCity(req.body.cityToAdd).then((cityResp) => {
                 if ((JSON.parse(cityResp.body)).cod === '200') {
-                    console.log('if');
                     userService.addCity(req.session.user._id, req.body.cityToAdd).then(() => {
                         res.redirect('/userpanel');
                     });

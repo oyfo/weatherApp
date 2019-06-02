@@ -13,7 +13,7 @@ const {
 chai.use(chaiAsPromised);
 nock.disableNetConnect();
 
-describe('weather helper', () => {
+describe('weather.js helper tests', () => {
     describe('getWeatherForCitiy', () => {
         it('should resolve promise', () => {
             nock('http://api.openweathermap.org/data/2.5/forecast/', {
@@ -108,7 +108,7 @@ describe('weather helper', () => {
             expect(JSON.stringify(forecast)).to.equal(JSON.stringify(data.forecast));
         });
 
-        it('should retunt empty object it resp code is not 200', () => {
+        it('should return empty object if resp code is not 200', () => {
             const res = {};
             res.body = data.responseBody3;
             const forecast = weather.parseWeatherResponse([res]);

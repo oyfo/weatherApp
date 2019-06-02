@@ -14,14 +14,13 @@ module.exports = {
 async function authenticate(req) {
     const { username } = req.body;
     const { password } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username: username });
     if (user && bcrypt.compareSync(password, user.password)) {
         const { password, ...userWithoutPass } = user.toObject();
         return {
             userWithoutPass
         };
     } else {
-        console.log('else not correct pass');
         return null;
     }
 }
