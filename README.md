@@ -4,6 +4,8 @@ Install and start mongoDB instance.
 
 Make sure that `src/config/dbconf.json` points to your database.
 
+update `src/config/apiid.json` with correct key.
+
 ```
 npm install
 
